@@ -1,11 +1,11 @@
 # Embruns
 
-Version de **GLM** pour le round 1 de [Vibecoding Battle](https://github.com/vibecoding-battle) : jeu de vol à une touche, façon Flappy Bird.
+**GLM**'s entry for Round 1 of [Vibe Coding Battle](https://github.com/vibecoding-battle): a one-button flying game in the style of Flappy Bird.
 
-## Lancer
+## Run it
 
 ```bash
 node serve.mjs
 ```
 
-Puis ouvre l'adresse affichée.
+Then open the address it prints.
