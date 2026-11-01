@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0c2423">
+  <meta name="description" content="Embruns — un jeu de vol à une touche au-dessus des pertuis, à l'aube.">
+  <title>Embruns — Le vol des pertuis</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/fonts/gilda-display.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/jost.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="js/game.js"></script>
+</head>
+<body>
+  <!--
+  THESIS: A living naturalist plate — one-touch arcade flight framed as a seaside field study; it refuses both the neon cartoon clone and the stock game HUD.
+  OWN-WORLD: Etched sepia linework over volumetric dawn washes; oxidized verdigris, wet brass, ivory Gilda lettering, Jost instrumentation, reed silhouettes and tidewater reflections.
+  STORY: A small bird crosses the sluice gates. One touch lifts; the world keeps breathing. The player reads the gesture instantly, stays for the coast, and chases a record.
+  FIRST VIEWPORT: Full-bleed estuary at first light; the bird hovers at lower third; EMBRUNS sits lower-left on a deep-tide scrim with one cream action; plate caption lower-right, sound at top-right.
+  FORM: Living naturalist field plate fused with one-touch arcade flight; candidate 3 of 7; seed 2545aa30.
+  FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md.
+  -->
+  <div class="app" id="app" data-state="intro">
+    <canvas id="flight" tabindex="0" role="img" aria-label="Embruns, un oiseau doré vole entre les pertuis au-dessus de l'estuaire. Appuyez sur Espace, cliquez ou touchez pour battre des ailes." aria-describedby="gameInstructions"></canvas>
+    <div class="scene-wash" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+    <div class="vignette" aria-hidden="true"></div>
+    <div class="plate-frame" aria-hidden="true">
+      <i></i><i></i><i></i><i></i>
+    </div>
+
+    <header class="topbar">
+      <div class="topbar__mark" aria-hidden="true">
+        <span class="topbar__word">Embruns</span>
+        <span class="topbar__rule"></span>
+        <span class="topbar__place">Pertuis de la brume</span>
+      </div>
+
+      <div class="hud-score" id="hudScore" aria-hidden="true">
+        <span class="hud-score__value" id="scoreDisplay">0</span>
+        <span class="hud-score__caption">passages</span>
+      </div>
+
+      <div class="topbar__actions">
+        <button class="icon-button" id="soundButton" type="button" aria-label="Couper le son" title="Couper le son (M)">
+          <svg class="icon icon--sound-on" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 9.2v5.6h3.4L12 18.5V5.5L7.4 9.2H4Z" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"/>
+            <path d="M15.3 9.1c1.1 1.5 1.1 4.3 0 5.8M17.9 6.7c2.4 2.8 2.4 7.8 0 10.6" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/>
+          </svg>
+          <svg class="icon icon--sound-off" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 9.2v5.6h3.4L12 18.5V5.5L7.4 9.2H4Z" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"/>
+            <path d="m16 9.5 4 5m0-5-4 5" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <button class="icon-button icon-button--pause" id="pauseButton" type="button" aria-label="Mettre le vol en pause" title="Pause (P)">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M9 6.5v11M15 6.5v11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <section class="layer layer--intro is-visible" id="introLayer" aria-labelledby="gameTitle">
+      <div class="intro__content">
+        <div class="intro__title-block">
+          <div class="title-lockup">
+            <h1 class="wordmark" id="gameTitle">Embruns</h1>
+            <svg class="title-scroll" viewBox="0 0 132 18" aria-hidden="true">
+              <path d="M1 9.5c19-4.5 34 4 53 0s32-4 51 0 19-1 26-3" fill="none" stroke="currentColor" stroke-width=".75" stroke-linecap="round"/>
+              <circle cx="64" cy="9" r="1.6" fill="currentColor"/>
+            </svg>
+          </div>
+          <p class="intro__lede">Un battement d'aile, et la marée s'ouvre.</p>
+          <div class="intro__actions">
+            <button class="button button--primary" id="playButton" type="button">
+              <span>Prendre son envol</span>
+              <svg class="button__arrow" viewBox="0 0 30 12" aria-hidden="true">
+                <path d="M1 6h26M22 1.5 27 6l-5 4.5" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+          <div class="control-hint" aria-label="Commandes">
+            <span class="control-hint__label">Battre des ailes</span>
+            <span class="control-hint__sep"></span>
+            <kbd class="keycap">Espace</kbd>
+            <span class="control-hint__or">ou</span>
+            <svg class="hint-icon" viewBox="0 0 18 22" aria-hidden="true">
+              <rect x="5" y="1.25" width="8.5" height="13.5" rx="4.25" fill="none" stroke="currentColor" stroke-width="1.1"/>
+              <path d="M9.2 4.2v4.2M4 17.8c1.4 2.2 8.5 2.2 10 0" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>
+            </svg>
+            <span>toucher</span>
+            <span class="control-hint__sep"></span>
+            <span class="control-hint__mouse">ou clic</span>
+          </div>
+        </div>
+
+        <div class="intro__foot">
+          <p><span class="intro__eyeline" aria-hidden="true"></span>Estuaire de la brume <span class="intro__dot">·</span> planche VII</p>
+          <p class="intro__record">Meilleur vol <span id="introBest">0</span> passages</p>
+        </div>
+      </div>
+
+      <aside class="intro__aside" aria-hidden="true">
+        <span class="intro__coords">47° 12′ N — 2° 08′ O</span>
+        <span class="intro__aside-rule"></span>
+        <span class="intro__aside-copy">Étude du vol côtier<br>à l'heure du reflux</span>
+      </aside>
+    </section>
+
+    <section class="layer layer--pause" id="pauseLayer" aria-labelledby="pauseTitle" aria-hidden="true" inert>
+      <div class="dialog dialog--pause" role="dialog" aria-modal="true" aria-labelledby="pauseTitle">
+        <h2 class="dialog__title" id="pauseTitle">Le vent tombe.</h2>
+        <p class="dialog__copy">La marée reprendra là où vous l'avez laissée.</p>
+        <div class="dialog__actions">
+          <button class="button button--primary" id="resumeButton" type="button">
+            <span>Reprendre le vol</span>
+            <svg class="button__arrow" viewBox="0 0 30 12" aria-hidden="true">
+              <path d="M1 6h26M22 1.5 27 6l-5 4.5" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <button class="text-button" id="pauseRestartButton" type="button">Recommencer</button>
+          <button class="text-button text-button--quiet" id="pauseMenuButton" type="button">Retour au rivage</button>
+        </div>
+        <p class="dialog__hint"><kbd class="keycap keycap--dark">P</kbd> pour reprendre</p>
+      </div>
+    </section>
+
+    <section class="layer layer--result" id="resultLayer" aria-labelledby="resultTitle" aria-hidden="true" inert>
+      <div class="dialog dialog--result" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
+        <div class="result__topline">
+          <span>Fin du vol</span>
+          <span id="resultPlate">Planche VII</span>
+        </div>
+        <div class="result__body">
+          <div class="result__score-wrap">
+            <span class="result__score" id="resultScore">0</span>
+            <span class="result__unit">passages</span>
+          </div>
+          <div class="result__divider" aria-hidden="true"></div>
+          <div class="result__copy">
+            <h2 class="dialog__title" id="resultTitle">La marée a le dernier mot.</h2>
+            <p class="dialog__copy" id="resultNarrative">Un vol bref, mais le rivage s'en souviendra.</p>
+            <p class="result__record">Meilleur vol <span id="resultBest">0</span> passages</p>
+            <div class="dialog__actions dialog__actions--row">
+              <button class="button button--primary" id="replayButton" type="button">
+                <span>Rejouer</span>
+                <svg class="button__arrow" viewBox="0 0 30 12" aria-hidden="true">
+                  <path d="M1 6h26M22 1.5 27 6l-5 4.5" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <button class="text-button" id="resultMenuButton" type="button">Retour au rivage</button>
+            </div>
+          </div>
+        </div>
+        <div class="record-stamp" id="recordStamp" aria-hidden="true">
+          <svg viewBox="0 0 104 104">
+            <circle cx="52" cy="52" r="49" fill="none" stroke="currentColor" stroke-width=".8"/>
+            <circle cx="52" cy="52" r="44" fill="none" stroke="currentColor" stroke-width=".55" stroke-dasharray="1 3"/>
+            <path id="stampCurve" d="M52 20a32 32 0 1 1-.1 0" fill="none" stroke="currentColor" stroke-width=".55" pathLength="100"/>
+            <text font-size="7.2" letter-spacing="1.9" fill="currentColor">
+              <textPath href="#stampCurve" startOffset="8%">NOUVEAU RECORD · NOUVEAU RECORD ·</textPath>
+            </text>
+            <path d="M40 53c4-7 9-11 12-11s8 4 12 11c-4 1-8 2-12 2s-8-1-12-2Z" fill="none" stroke="currentColor" stroke-width=".8"/>
+            <path d="M46 55c2 3 4 4 6 4s4-1 6-4" fill="none" stroke="currentColor" stroke-width=".7"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footline" aria-hidden="true">
+      <span>Aube basse</span>
+      <span class="footline__line"></span>
+      <span>Marée montante</span>
+      <span class="footline__line"></span>
+      <span>Vent de terre</span>
+    </footer>
+
+    <div class="flash" id="flash" aria-hidden="true"></div>
+    <p class="sr-only" id="gameInstructions">Embruns est un jeu de vol à une touche. Appuyez sur Espace, la flèche haut, cliquez ou touchez l'écran pour faire monter l'oiseau. Évitez les pertuis et l'eau. Appuyez sur P ou Échap pour mettre en pause. Appuyez sur M pour couper le son.</p>
+    <p class="sr-only" id="liveRegion" aria-live="polite"></p>
+  </div>
+</body>
+</html>
